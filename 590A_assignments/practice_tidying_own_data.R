@@ -120,3 +120,13 @@ write.csv(fulljoin_guadua, "590A_assignments/fulljoin_guadua.csv", row.names = F
 guadua_full <- read_csv("590A_assignments/fulljoin_guadua.csv") #just checking to make sure this worked
 view(guadua_full) #NOTE - have not dealt with NA or x that represents NA just yet. 
 
+#saving foliage leaf version -----
+write.csv(foliageleaf, "590A_assignments/foliageleaf.csv", row.names = FALSE)
+seeleaf <- read_csv("590A_assignments/foliageleaf.csv") #just checking to make sure this worked
+view(seeleaf) #NOTE - have not dealt with NA or x that represents NA just yet. 
+
+#saving flower version -----
+write.csv(flower, "590A_assignments/flower.csv", row.names = FALSE)
+seeflower <- read_csv("590A_assignments/flower.csv") #just checking to make sure this worked
+view(seeflower) #NOTE - have not dealt with NA or x that represents NA just yet. 
+
