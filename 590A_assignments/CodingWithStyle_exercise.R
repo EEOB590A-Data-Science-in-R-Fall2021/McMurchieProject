@@ -27,3 +27,5 @@ summary(mod1)
 
 # create a csv file ------
 write.csv("database1_15September2021.csv")
+
+#### Haldre - you've got great R code style!
