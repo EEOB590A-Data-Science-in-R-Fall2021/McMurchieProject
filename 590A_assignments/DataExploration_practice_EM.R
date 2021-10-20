@@ -248,7 +248,7 @@ ggplot(fencesurv, aes(centavgopen, propalive, color = site)) + # island seems to
 ggplot(fencesurv, aes(centavgopen)) +
 geom_histogram() # outliers at 40, 60
 
-# response - don't realluy zee outliers
+# response - don't really see outliers
 
 # for response see
 ggplot(fencesurv, aes(propalive)) +
