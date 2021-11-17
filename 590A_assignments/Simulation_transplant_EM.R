@@ -121,3 +121,6 @@ ggplot(bambooex, aes(ex10, color = habitat)) +
   facet_grid(location ~ habit)
 
 
+write.csv(bambooex,"590A_assignments/simbambooshort.csv")
+
+
