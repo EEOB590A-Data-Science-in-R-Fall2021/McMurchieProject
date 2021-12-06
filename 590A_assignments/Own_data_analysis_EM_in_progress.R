@@ -1,14 +1,16 @@
 # load appropriate libraries, installing if needed
-library(knitr)
-library(formatR)
-library(RRPP)
-library(geomorph)
-library(tidyverse)
-library(readxl)
-library(ade4)
-library(vegan)
-library(pander)
-library(readr)
+#library(knitr)
+#library(formatR)
+library(RRPP) #factorial manova uses this 
+library(geomorph) #factorial manova uses this 
+library(tidyverse) #this includes ggplot2 needed for graphics
+library(readxl) #to read in doc
+library(ade4) #needed for PcoA - background for analysis
+library(vegan) #needed for PCoA - background for analysis
+library(pander) #needed for model comparison
+library(readr) #needed for model comparison
+library(ggcorrplot) #for correlation table
+
 
 # Read in data as dataframe
 guadualeaf <- read_csv("data/tidy/guadualeaf.csv", col_names = TRUE, na = "x")
@@ -35,13 +37,20 @@ Y <- df[,9:ncol(df)] # reads in the binary data only
 Y <- data.frame(lapply(Y,function(x) as.numeric(levels(x))[x]))
 correlation_y <- data.frame(cor(Y)) #calculated the correlation of the Y values
 
-view(correlation_y)
+view(correlation_y) #viewing basic correlation table
 
+#ggcorrplot alows us to view correlation table with colors indicating correlation values
 
-# try to write code here to filter by the higher correlation values -----
+ggcorrplot(correlation_y, hc.order = TRUE, lab = TRUE)
 
-correlation_y %>%
-  filter(between(ab_papillae_long_cells_interstomatal, 0.7, 0.99))
+corrs <- ggcorrplot(correlation_y, hc.order = TRUE, lab = TRUE)
+
+ggsave("corrplot.pdf", plot = corrs, width = 16, height = 14, units = "in", dpi = 300)
+
+corrs2 <- ggcorrplot(correlation_y, hc.order = TRUE, lab = TRUE, type = "upper")
+
+ggsave("corrplot2.pdf", plot = corrs2, width = 16, height = 14, units = "in", dpi = 300)
+
 
 ### PCoA We get the distance matrix for our binary data using simple matching
 # coefficient. Then we are able to calculate the PCoA on the distance matrix
@@ -302,10 +311,13 @@ regionpcoa <- nice_df %>%
 
 ggsave("region.pdf", plot = regionpcoa, width = 6, height = 4, units = "in", dpi = 300)
 
-### Scree Plot From the PCoA we are able to obtain eigenvalues and then plot them to show the percent variation explained along each PCoA axis. As seen in the plot below, PCoA axis 1 is responsible for the majority of variation in the PCoA, followed by a steep drop in variation. By the 20th axis, variation is arguably negligible. 
+### Scree Plot From the PCoA we are able to obtain eigenvalues and then plot them
+#to show the percent variation explained along each PCoA axis. As seen in the plot below,
+#PCoA axis 1 is responsible for the majority of variation in the PCoA, followed by a
+#steep drop in variation. By the 20th axis, variation is arguably negligible. 
 
 eig_df <- data.frame( x_values = c(1:length(PCoA$eig)) , eig_value = c(PCoA$eig))
-ggplot(data = eig_df, aes(x = x_values, y = eig_value)) +
+scree <- ggplot(data = eig_df, aes(x = x_values, y = eig_value)) +
   geom_line() +
   geom_point() + 
   theme_minimal() +
@@ -313,9 +325,10 @@ ggplot(data = eig_df, aes(x = x_values, y = eig_value)) +
     panel.border = element_rect(size = 2, color = "black", fill = NA)
   ) + 
   labs(
-    x = "Axis 1",
-    y = "Axis 2"
+    x = "Coordinate number",
+    y = "Eigenvalue"
   )
+
 
 #saving scree plot
 
@@ -328,8 +341,8 @@ scree <- ggplot(data = eig_df, aes(x = x_values, y = eig_value)) +
     panel.border = element_rect(size = 2, color = "black", fill = NA)
   ) + 
   labs(
-    x = "Axis 1",
-    y = "Axis 2"
+    x = "Coordinate number",
+    y = "Eigenvalue"
   )
 
 ggsave("scree.pdf", plot = scree, width = 6, height = 4, units = "in", dpi = 300)
@@ -359,7 +372,6 @@ mydat3 <- rrpp.data.frame("Y" = Y,
 model3.rrpp <- lm.rrpp(Y.dist.matrix ~ mydat3$Habit + mydat3$Habitat + mydat3$Region,  
                        print.progress = FALSE)
 anova(model3.rrpp)
-
 
 ### MODEL COMPARISON USING LIKELIHOOD RATIO TEST (LTR)
 
